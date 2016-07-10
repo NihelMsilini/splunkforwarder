@@ -1,0 +1,33 @@
+--- #This is a playbook that installs the splunk architectute : the server splunk and the server forwarder
+- hosts: remote
+  user: test
+  sudo: yes
+  connection: ssh
+  gather_facts: yes
+ # vars_prompt:
+  #   - name: "port"
+   #    prompt: "Please add your forwarder's port"
+    #   private: no
+    # - name: "serverip"
+    #   prompt: "Please add the server's ip address"
+     #  private: no
+  tasks:
+# URL: https://www.splunk.com/en_us/download/universal-forwarder.html#
+    - name: Get the splunkforwarder
+      shell: wget -O splunkforwarder-6.4.1-debde650d26e-linux-2.6-amd64.deb 'https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=6.4.1&product=universalforwarder&filename=splunkforwarder-6.4.1-debde650d26e-linux-2.6-amd64.deb&wget=true'
+      args:
+        chdir: /opt/
+      run_once: true
+    - name: Install splunkforwarder
+      shell: dpkg -i /opt/splunkforwarder-6.4.1-debde650d26e-linux-2.6-amd64.deb
+      run_once: true
+    - name: Enable splunkforwarder to start on boot
+      shell: ./splunk enable boot-start --accept-license
+      args:
+         chdir: /opt/splunkforwarder/bin/
+      run_once: true
+    - name: Start server
+      service: name=splunk state=restarted
+#    - name: Forward logs to the splunk server
+ #     shell: /opt/splunkforwarder/bin/./splunk add forward-server {{serverip}}:{{port}} -auth admin:changeme
+
