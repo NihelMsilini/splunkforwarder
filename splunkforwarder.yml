@@ -1,16 +1,16 @@
 --- #This is a playbook that installs the splunk architectute : the server splunk and the server forwarder
-- hosts: remote
+- hosts: Fw108
   user: test
   sudo: yes
   connection: ssh
   gather_facts: yes
- # vars_prompt:
-  #   - name: "port"
-   #    prompt: "Please add your forwarder's port"
-    #   private: no
-    # - name: "serverip"
-    #   prompt: "Please add the server's ip address"
-     #  private: no
+  vars_prompt:
+     - name: "port"
+       prompt: "Please add your forwarder's port"
+       private: no
+     - name: "serverip"
+       prompt: "Please add the server's ip address"
+       private: no
   tasks:
 # URL: https://www.splunk.com/en_us/download/universal-forwarder.html#
     - name: Get the splunkforwarder
@@ -28,6 +28,6 @@
       run_once: true
     - name: Start server
       service: name=splunk state=restarted
-#    - name: Forward logs to the splunk server
- #     shell: /opt/splunkforwarder/bin/./splunk add forward-server {{serverip}}:{{port}} -auth admin:changeme
+    - name: Forward logs to the splunk server
+      shell: /opt/splunkforwarder/bin/./splunk add forward-server {{serverip}}:{{port}} -auth admin:changeme
 
